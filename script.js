@@ -38,7 +38,6 @@ document.addEventListener('click', (e) => {
 const themeBtn = document.getElementById('theme-toggle');
 const icon = themeBtn.querySelector('i');
 
-// Function to update theme
 function updateTheme(isDark) {
     if (isDark) {
         document.body.classList.add('dark-mode');
@@ -51,14 +50,12 @@ function updateTheme(isDark) {
     }
 }
 
-// Toggle theme
 themeBtn.addEventListener('click', () => {
     const isDark = !document.body.classList.contains('dark-mode');
     updateTheme(isDark);
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
 });
 
-// Load saved theme
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme === 'dark') {
     updateTheme(true);
@@ -70,19 +67,15 @@ const portfolioItems = document.querySelectorAll('.portfolio-item');
 
 filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-        // Remove active class from all buttons
         filterBtns.forEach(b => b.classList.remove('active'));
-        // Add active class to clicked button
         btn.classList.add('active');
         
         const filter = btn.getAttribute('data-filter');
         
         portfolioItems.forEach(item => {
             const category = item.getAttribute('data-category');
-            
             if (filter === 'all' || category === filter) {
                 item.classList.remove('hidden');
-                // Stagger animation
                 setTimeout(() => {
                     item.style.animation = 'fadeInUp 0.6s ease';
                 }, Math.random() * 200);
@@ -93,7 +86,7 @@ filterBtns.forEach(btn => {
     });
 });
 
-// Smooth scroll for anchor links
+// Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -111,10 +104,27 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// WHATSAPP SEND FUNCTION (ჩამატებულია აქ)
+function sendToWhatsApp() {
+    const phoneInput = document.getElementById('user-phone');
+    const phoneValue = phoneInput.value.trim();
+    
+    if (phoneValue === "" || phoneValue.length < 9) {
+        alert('გთხოვთ შეიყვანოთ სწორი ტელეფონის ნომერი! / Por favor, introduce un número válido.');
+        return;
+    }
+
+    const myNumber = "34632634646"; 
+    const message = `Hola, mi número de teléfono es: ${phoneValue}. Me gustaría solicitar una consulta.`;
+    const whatsappUrl = `https://wa.me/${myNumber}?text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappUrl, '_blank');
+    phoneInput.value = ''; // ვასუფთავებთ ველს გაგზავნის შემდეგ
+}
+
 // Scroll animations
 function animateOnScroll() {
     const elements = document.querySelectorAll('.s-card, .portfolio-item');
-    
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -122,10 +132,7 @@ function animateOnScroll() {
                 entry.target.style.transform = 'translateY(0)';
             }
         });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
     
     elements.forEach(el => {
         el.style.opacity = '0';
@@ -135,30 +142,9 @@ function animateOnScroll() {
     });
 }
 
-// Initialize animations when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    animateOnScroll();
-});
+document.addEventListener('DOMContentLoaded', animateOnScroll);
 
-// Form submission handler
-const contactForm = document.getElementById('contact-form');
-if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const phoneInput = contactForm.querySelector('input[type="tel"]');
-        const phone = phoneInput.value;
-        
-        if (phone && phone.length >= 9) {
-            // Show success message
-            alert('მადლობა! ჩვენ მალე დაგიკავშირდებით.');
-            phoneInput.value = '';
-        } else {
-            alert('გთხოვთ შეიყვანოთ სწორი ტელეფონის ნომერი!');
-        }
-    });
-}
-
-// Add parallax effect to hero
+// Parallax effect
 window.addEventListener('scroll', () => {
     const heroBackground = document.querySelector('.hero-background');
     if (heroBackground) {
@@ -166,85 +152,5 @@ window.addEventListener('scroll', () => {
         heroBackground.style.transform = `translateY(${scrolled * 0.5}px)`;
     }
 });
-
-// Add shake animation CSS dynamically
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-        20%, 40%, 60%, 80% { transform: translateX(5px); }
-    }
-`;
-document.head.appendChild(style);
-
-// Stats counter animation
-function animateStats() {
-    const stats = document.querySelectorAll('.stat-item h3');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const target = entry.target;
-                const text = target.textContent;
-                const hasPlus = text.includes('+');
-                const hasPercent = text.includes('%');
-                const number = parseInt(text);
-                
-                let current = 0;
-                const increment = number / 50;
-                
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= number) {
-                        target.textContent = number + (hasPlus ? '+' : '') + (hasPercent ? '%' : '');
-                        clearInterval(timer);
-                    } else {
-                        target.textContent = Math.floor(current) + (hasPlus ? '+' : '') + (hasPercent ? '%' : '');
-                    }
-                }, 30);
-                
-                observer.unobserve(target);
-            }
-        });
-    }, { threshold: 0.5 });
-    
-    stats.forEach(stat => observer.observe(stat));
-}
-
-// Initialize stats animation
-document.addEventListener('DOMContentLoaded', () => {
-    animateStats();
-});
-
-// Add loading animation for images
-document.querySelectorAll('img').forEach(img => {
-    img.style.opacity = '0';
-    img.style.transition = 'opacity 0.5s ease';
-    
-    img.addEventListener('load', () => {
-        img.style.opacity = '1';
-    });
-});
-
-// Performance optimization: Throttle scroll events
-function throttle(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Apply throttle to scroll event
-const throttledScroll = throttle(() => {
-    // Scroll-based animations here
-}, 100);
-
-window.addEventListener('scroll', throttledScroll);
 
 console.log('🏗️ CONSTRUCTO საიტი წარმატებით ჩაიტვირთა!');
